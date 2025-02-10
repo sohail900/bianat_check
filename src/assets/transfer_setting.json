@@ -1,0 +1,171 @@
+{
+  "Settings": {
+    "Name": "Settings",
+    "data": [
+      {
+        "Name": "Symbol",
+        "Key": "code"
+      },
+      {
+        "Name": "Open",
+        "Key": "open"
+      },
+      {
+        "Name": "High",
+        "Key": "high"
+      },
+      {
+        "Name": "Low",
+        "Key": "low"
+      },
+      {
+        "Name": "Close",
+        "Key": "close"
+      },
+      {
+        "Name": "Volume",
+        "Key": "volume"
+      },
+      {
+        "Name": "Previous Close",
+        "Key": "previousClose"
+      },
+      {
+        "Name": "Change",
+        "Key": "change"
+      },
+      {
+        "Name": "Change Percent",
+        "Key": "change_p"
+      },
+      {
+        "Name": "Sma9",
+        "Key": "sma9"
+      },
+      {
+        "Name": "Sma20",
+        "Key": "sma20"
+      },
+      {
+        "Name": "Sma50",
+        "Key": "sma50"
+      },
+      {
+        "Name": "Sma21",
+        "Key": "sma21"
+      },
+      {
+        "Name": "Sma30",
+        "Key": "sma30"
+      },
+      {
+        "Name": "Sma10",
+        "Key": "sma10"
+      },
+      {
+        "Name": "Sma40",
+        "Key": "sma40"
+      },
+      {
+        "Name": "Sma100",
+        "Key": "sma100"
+      },
+      {
+        "Name": "Sma150",
+        "Key": "sma150"
+      },
+      {
+        "Name": "Sma200",
+        "Key": "sma200"
+      },
+      {
+        "Name": "Ema9",
+        "Key": "ema9"
+      },
+      {
+        "Name": "Ema10",
+        "Key": "ema10"
+      },
+      {
+        "Name": "Ema20",
+        "Key": "ema20"
+      },
+      {
+        "Name": "Ema21",
+        "Key": "ema21"
+      },
+      {
+        "Name": "Ema30",
+        "Key": "ema30"
+      },
+      {
+        "Name": "Ema50",
+        "Key": "ema50"
+      },
+      {
+        "Name": "Ema40",
+        "Key": "ema40"
+      },
+      {
+        "Name": "Ema100",
+        "Key": "ema100"
+      },
+      {
+        "Name": "Ema150",
+        "Key": "ema150"
+      },
+      {
+        "Name": "Ema200",
+        "Key": "ema200"
+      },
+      {
+        "Name": "Address",
+        "Key": "address"
+      },
+      {
+        "Name": "Day Ma50",
+        "Key": "dayMA50"
+      },
+      {
+        "Name": "Day Ma200",
+        "Key": "dayMA200"
+      },
+      {
+        "Name": "Market Cap",
+        "Key": "marketCapitalization"
+      },
+      {
+        "Name": "Shares Outstanding",
+        "Key": "sharesOutstanding"
+      },
+      {
+        "Name": "SharesFloat",
+        "Key": "sharesFloat"
+      },
+      {
+        "Name": "Week Low 52",
+        "Key": "weekLow52"
+      },
+      {
+        "Name": "Week High 52",
+        "Key": "weekHigh52"
+      },
+      {
+        "Name": "Sector",
+        "Key": "sector"
+      },
+      {
+        "Name": "Industry",
+        "Key": "industry"
+      },
+      {
+        "Name": "Price Vs Week High 52",
+        "Key": "priceVsWeekHigh52"
+      },
+      {
+        "Name": "Price Vs Week Low 52",
+        "Key": "priceVsWeekLow52"
+      }
+    ]
+  }
+}

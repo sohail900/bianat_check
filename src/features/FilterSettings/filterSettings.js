@@ -1,0 +1,711 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import esb from "elastic-builder";
+
+
+/**
+ * @name filtersSlice
+ * @type {object}
+ * @property {object} filterOption - filter options
+ * @property {function} fetchFilterSettings - fetch filter settings
+ * @description: Filters slice
+ */
+
+const obj = {
+  "BianatSelectRating": {
+    "name": "Bianat Select Rating",
+    "id": "screener-bianat-select-rating",
+    "filters": [
+      {
+        "name": "EPS Rating",
+        "id": "epsRating",
+        "nameAr": "تقييم الربحية",
+        "type": "max-min",
+        "unit": "%"
+      },
+      {
+        "name": "RS Rating",
+        "id": "relativeStrength.current",
+        "nameAr": "تقييم القوة النسبية",
+        "type": "max-min",
+        "unit": "%"
+      },
+      {
+        "name": "Comp Rating",
+        "id": "compRating",
+        "nameAr": "التقييم المركب",
+        "type": "max-min",
+        "unit": "%"
+      }
+    ]
+  },
+  "price": {
+    "name": "Price",
+    "id": "screener-price",
+    "filters": [
+      {
+        "name": "Price",
+        "nameAr": "السعر",
+        "id": "price",
+        "type": "max-min",
+        "unit": "sr"
+      },
+      {
+        "name": "Price vs 52 Week High",
+        "id": "price_vs_52_high",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "السعر مقارنة بالأعلى سنوي"
+      },
+      {
+        "name": "Price % Change - Current Day",
+        "id": "price_per_change_minus_current_day",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير السعر خلال اليوم"
+      },
+      {
+        "name": "Price SR Change Daily",
+        "id": "price_sr_change_daily",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "تغير السعر لأخر يوم"
+      },
+      {
+        "name": "Price % Change - Current Week",
+        "id": "price_per_change_current_week",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ التغير للأسبوع الحالي"
+      },
+      {
+        "name": "Price % Change - Last Month",
+        "id": "price_per_change_last_month",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ التغير للشهر الماضي"
+      },
+      {
+        "name": "Price % Change - Last 3 Months",
+        "id": "price_per_change_last_3_month",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ التغير ٣ أشهر"
+      },
+      {
+        "name": "Price % Change - Last 6 Months",
+        "id": "price_per_change_last_6_month",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ التغير ٦ أشهر"
+      },
+      {
+        "name": "Price % Change - Last 12 Months",
+        "id": "price_per_change_last_12_month",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ التغير ١٢ أشهر"
+      },
+      {
+        "name": "Price % Change - Year to Date",
+        "id": "price_per_change_year_to_date",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير السعر لسنة"
+      },
+      {
+        "name": "Weekly Closing Range",
+        "id": "weekly_closing_range",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "مدى الاغلاق الاسبوعي"
+      },
+      {
+        "name": "Daily Closing Range",
+        "id": "daily_closing_range",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "مدى الاغلاق اليومي"
+      },
+      {
+        "name": "Price vs 10 Days",
+        "id": "price_vs_moving_average_10",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "السعر بالمقارنة مع متوسط ١٠ أيام"
+      },
+      {
+        "name": "Price vs 21 Days",
+        "id": "price_vs_moving_average_21",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "السعر بالمقارنة مع متوسط ٢١ يوم"
+      },
+      {
+        "name": "Price vs 50 Days",
+        "id": "price_vs_moving_average_50",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "السعر بالمقارنة مع متوسط ٥٠ يوم"
+      },
+      {
+        "name": "Price vs 150 Days",
+        "id": "price_vs_moving_average_150",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "السعر بالمقارنة مع متوسط ١٥٠ يوم"
+      },
+      {
+        "name": "Price vs 200 Days",
+        "id": "price_vs_moving_average_200",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "السعر بالمقارنة مع متوسط ٢٠٠ يوم"
+      },
+      {
+        "name": "10 Days MA > 20 Days MA > 50 Days MA",
+        "id": "day_10_gt_21_day_gt_50_day",
+        "type": "yes-no",
+        "nameAr": "متوسط ١٠ > ٢١ يوم > ٥٠ يوم"
+      },
+      {
+        "name": "50 Days MA > 150 Days MA > 200 Days MA",
+        "id": "day_50_gt_150_day_gt_200_day",
+        "type": "yes-no",
+        "nameAr": "متوسط ٥٠ > ١٥٠ يوم > ٢٠ يوم"
+      },
+      {
+        "name": "Volume - 50 Days Average",
+        "id": "volume_minus_50_day_average",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "حجم التداول بالمقارنة مع متوسط ٥٠ يوم"
+      },
+      {
+        "name": "Volume - % Change vs 50 Days Average",
+        "id": "volume_minus_per_change_vs_50_day_average",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغيير الحجم بالمقارنة مع متوسط ٥٠"
+      },
+      {
+        "name": "Weekly Volume - % Change vs 10 Week Average",
+        "id": "weekly_volume_minus_per_change_vs_10_weeks_average",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير الحجم الأسبوعية بالمقارنة ١٠ أسابيع"
+      },
+      {
+        "name": "Current Day Volume > Previous 5 Days Volume",
+        "id": "current_day_volume_greater_than_previous_5_days_volume",
+        "type": "yes-no",
+        "nameAr": "كمية التداول الحالية اكبر من ٥ أيام"
+      },
+      {
+        "name": "Current Day Volume > Previous 10 Days Volume",
+        "id": "current_day_volume_greater_than_previous_10_days_volume",
+        "type": "yes-no",
+        "nameAr": " كمية التداول الحالية اكبر من ١٠ أيام "
+      },
+      {
+        "name": "Current Day Volume > Previous 20 Days Volume",
+        "id": "current_day_volume_greater_than_previous_20_days_volume",
+        "type": "yes-no",
+        "nameAr": " كمية التداول الحالية اكبر من ٢٠ أيام "
+      },
+      {
+        "name": "Volume (1000)",
+        "id": "volume",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "كمية التداول بالآلاف"
+      },
+      {
+        "name": "Up/Down Volume Ratio",
+        "id": "up_down_volume_ratio",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "٪ كمية التداول الصاعدة للهابطة "
+      },
+      {
+        "name": "Volume - 50 Day Average Riyal(1000s)",
+        "id": "volume_50_days_average_riyal",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": ""
+      },
+      {
+        "name": "RS Line New High",
+        "id": "rs_line_new_high",
+        "type": "yes-no",
+        "nameAr": "مستوى نسبي جديد"
+      },
+      {
+        "name": "RS Line Within 5% of New High",
+        "id": "rs_line_within_5_percent_of_new_high",
+        "type": "yes-no",
+        "nameAr": "خط القوة النسبية ضمن ٥ ٪ من القمة"
+      },
+      {
+        "name": "RS Rating - 3 Months",
+        "id": "rs_rating_3_months",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "تقييم القوة النسبية ٣ أشهر"
+      },
+      {
+        "name": "RS Rating - 6 Months",
+        "id": "rs_rating_6_months",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "تقييم القوة النسبية ٦ أشهر"
+      },
+      {
+        "name": "Alpha",
+        "id": "alpha",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "ألفا"
+      },
+      {
+        "name": "Beta",
+        "id": "beta",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "بيتا"
+      },
+      {
+        "name": "Average True Range (30 Days)",
+        "id": "average_true_range",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "معدل تذبذب النطاق السعري ٣٠ يوم"
+      }
+    ]
+  },
+  "sales": {
+    "name": "Sales",
+    "id": "screener-sales",
+    "filters": [
+      {
+        "name": "Sales % Change - Last Reported Quarter",
+        "id": "sales_per_change_minus_last_reported_quarter",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير مبيعات أحر ربع"
+      },
+      {
+        "name": "Average Sales % Change - Last 2 Qtrs",
+        "id": "average_sales_per_change_minus_last_2_qtrs",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ معدل تغير مبيعات أخر ربعين"
+      },
+      {
+        "name": "Average Sales % Change - Last 3 Qtrs",
+        "id": "average_sales_per_change_minus_last_3_qtrs",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ معدل تغير مبيعات أخر ٣ أرباع"
+      },
+      {
+        "name": "Average Sales % Change - Last 4 Qtrs",
+        "id": "average_sales_per_change_minus_last_4_qtrs",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ معدل تغير مبيعات أخر ٤ أرباع"
+      },
+      {
+        "name": "Average Sales % Change - Last 5 Qtrs",
+        "id": "average_sales_per_change_minus_last_5_qtrs",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ معدل تغير مبيعات أخر ٥ أربا٤"
+      },
+      {
+        "name": "Average Sales % Change - Last 6 Qrtrs",
+        "id": "average_sales_per_change_minus_last_6_qtrs",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ معدل تغير مبيعات أخر ٦ أرباع"
+      },
+      {
+        "name": "Sales % Change - Last Reported Year",
+        "id": "sales_per_change_minus_last_reported_year",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير مبيعات اخر سنة"
+      },
+      {
+        "name": "Sales % Growth Rate - Last 3 Years",
+        "id": "sales_per_growth_rate_minus_last_3_years",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ نمو مبيعات اخر ٣ سنوات"
+      },
+      {
+        "name": "Sales % Growth Rate - Last 5 Years",
+        "id": "sales_per_growth_rate_minus_last_5_years",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ نمو مبيعات اخر ٥ سنوات"
+      }
+    ]
+  },
+  "earnings": {
+    "name": "Earnings",
+    "id": "screener-earnings",
+    "filters": [
+      {
+        "name": "EPS % Change - Quarter YoY",
+        "id": "eps_per_change_minus_previous_quarter_yoy",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير ربحية الربع الحالي مقارنة بالمماثل "
+      },
+      {
+        "name": "EPS % Change - previous Quarter with its YoY",
+        "id": "eps_per_change_minus_previous_quarter_yoy",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير ربحية الربع السابق مقارنة بالمماثل"
+      },
+      {
+        "name": "EPS % Change - the 2nd previous Quarter with its YoY",
+        "id": "eps_per_change_second_previous_second_quarter_yoy",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير ربحية الربع قبل السابق مقارنة بالمماثل"
+      },
+      {
+        "name": "EPS % Change - the 3rd previous Quarter with its YoY",
+        "id": "eps_per_change_third_previous_third_quarter_yoy",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير ربحية الربع ٣ السابق مقارنة بالمماثل "
+      },
+      {
+        "name": "EPS % Change - Last Reported Quarter > Last 3 Years",
+        "id": "eps_per_change_minus_last_reported_quarter_gt_last_3_year_change",
+        "type": "yes-no",
+        "nameAr": "% تغير الربحية للربع الحالي اكبر من ربحية السهم لاخر 3 سنوات"
+      },
+      {
+        "name": "Average EPS % Change - Last 2 Qrtrs",
+        "id": "average_eps_per_change_minus_last_2_quarter",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير الربحية لأخر ربعين "
+      },
+      {
+        "name": "Average EPS % Change - Last 3 Qrtrs",
+        "id": "average_eps_per_change_minus_last_3_quarter",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير الربحية لأخر ٣ أرباع "
+      },
+      {
+        "name": "Average EPS % Change - Last 4 Qrtrs",
+        "id": "average_eps_per_change_minus_last_4_quarter",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير الربحية لأخر ٤ أرباع "
+      },
+      {
+        "name": "Average EPS % Change - Last 5 Qrtrs",
+        "id": "average_eps_per_change_minus_last_5_quarter",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير الربحية لأخر ٥ أرباع "
+      },
+      {
+        "name": "Average EPS % Change - Last 6 Qrtrs",
+        "id": "average_eps_per_change_minus_last_6_quarter",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تغير الربحية لأخر ٦ أرباع "
+      },
+      {
+        "name": "EPS - Trailing 4 Qtrs",
+        "id": "eps_minus_trailing_4_quarters",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "ربحية ٤ أرباع مرحلية"
+      },
+      {
+        "name": "EPS - Trailing 4 Qtrs > EPS, 4 Years Ago",
+        "id": "eps_minus_trailing_4_quarters_gt_eps_4_year_ago",
+        "type": "yes-no",
+        "nameAr": " ربحية ٤ أرباع مرحلية أكبر من ربحية ٤ سنوات ماضية "
+      },
+      {
+        "name": "EPS - Trailing 4 Qtrs >= Last Year",
+        "id": "eps_minus_trailing_4_quarters_gt_eps_1_year_ago",
+        "type": "yes-no",
+        "nameAr": " ربحية ٤ أرباع مرحلية أكبر من ربحية السنة الماضية"
+      },
+      {
+        "name": "EPS % Change - Last Reported Year vs. 1 Year Ago",
+        "id": "eps_per_change_minus_last_reported_year_vs_1_year_ago",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ أحدث ربحية مقارنة بالسنة الماضية"
+      },
+      {
+        "name": "EPS % Change - 1 Year Ago vs. 2 Years Ago",
+        "id": "eps_per_change_minus_one_year_ago_vs_2_years_ago",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ ربحية السنة الماضية مقارنة سنتين قبل"
+      },
+      {
+        "name": "EPS % Growth Rate - Last Year",
+        "id": "eps_growth_rate_minus_last_year",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تقييم نمو ربحية السنة الماضية"
+      },
+      {
+        "name": "EPS % Grwth Rate - Last 3 Years",
+        "id": "eps_growth_rate_minus_last_3_years",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تقييم نمو ربحية أخر ٣ سنوات"
+      },
+      {
+        "name": "EPS % Growth Rate - Last 5 Years",
+        "id": "eps_growth_rate_minus_last_5_years",
+        "type": "max-min",
+        "unit": "%",
+        "nameAr": "٪ تقييم نمو ربحية أخر ٥ سنوات"
+      },
+      {
+        "name": "EPS % Grwth Rate - Last 3 Years >= 5 Years",
+        "id": "eps_growth_rate_minus_last_3_years_gt_eps_5_year",
+        "type": "yes-no",
+        "nameAr": "٪ تقييم نمو ربحية أخر ٣ سنوات أكبر أو مساوي ٥ سنوات"
+      },
+      {
+        "name": "EPS - Last Reported Year",
+        "id": "eps_minus_last_reported_year",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "ربحية اخر سنة"
+      },
+      {
+        "name": "EPS - 1 Year Ago",
+        "id": "eps_minus_1_year_ago",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "الربحية للسنة الماضية"
+      },
+      {
+        "name": "EPS - 2 Years Ago",
+        "id": "eps_minus_2_years_ago",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "الربحية لسنتين ماضية"
+      },
+      {
+        "name": "EPS - 3 Years Ago",
+        "id": "eps_minus_3_years_ago",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "الربحية لثلاثة سنوات ماضية"
+      },
+      {
+        "name": "EPS - 4 Years Ago",
+        "id": "eps_minus_4_years_ago",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "الربحية لأربعة سنوات ماضية"
+      },
+      {
+        "name": "EPS - 5 Years Ago",
+        "id": "eps_minus_5_years_ago",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "الربحية لخمسة سنوات ماضية"
+      },
+      {
+        "name": "EPS - 6 Years Ago",
+        "id": "eps_minus_6_years_ago",
+        "type": "max-min",
+        "unit": "sr",
+        "nameAr": "الربحية لستة سنوات ماضية"
+      },
+      {
+        "name": "EPS - Last Reported Year > 4 Years Ago",
+        "id": "eps_minus_last_reported_year_gt_4_years_ago",
+        "type": "yes-no",
+        "nameAr": "ربحية اخر سنة اكبر من ٤ سنوات"
+      }
+    ]
+  },
+  "sharesAndHoldings": {
+    "name": "Shares & Holdings",
+    "id": "shares_and_holdings",
+    "filters": [
+      {
+        "name": "Shares Outstanding (1000s)",
+        "id": "sharesOutstanding",
+        "nameAr": "الأسهم المصدرة بالآلاف",
+        "type": "max-min",
+        "unit": "sr"
+      },
+      {
+        "name": "Shares in Float (1000s)",
+        "id": "sharesFloat",
+        "nameAr": "الأسهم الحرة بالآلاف",
+        "type": "max-min",
+        "unit": "sr"
+      },
+      {
+        "name": "Market Capitalization (mil)",
+        "id": "marketCapitalizationMln",
+        "nameAr": "القيمة السوقية بالمليون",
+        "type": "max-min",
+        "unit": "sr"
+      },
+      {
+        "name": "Enterprise Value (mil)",
+        "id": "enterpriseValue",
+        "nameAr": "قيمة الشركة",
+        "type": "max-min",
+        "unit": "sr"
+      }
+    ]
+  },
+  "marginAndRatio": {
+    "name": "Margin & Ratio",
+    "id": "screener-margin_and_ratio",
+    "filters": [
+      {
+        "name": "Dividend Yield",
+        "id": "dividendYield",
+        "nameAr": "التوزيعات النقدية",
+        "type": "max-min",
+        "unit": "%"
+      },
+      {
+        "name": "Net Margin Acceleration - Last 3 Qtrs",
+        "id": "netMarginAccelerationLast3Qtrs",
+        "nameAr": "تسارع هامش الأرباح لأخر ٣ أرباع  الصافي",
+        "type": "yes-no"
+      },
+      {
+        "name": "Gross Margin - Last Reported Year",
+        "id": "grossMarginLastReportedYear",
+        "nameAr": "إجمالي دخل أخر سنة",
+        "type": "max-min",
+        "unit": "%"
+      },
+      {
+        "name": "Gross Margin - Average Last 2 Qtrs",
+        "id": "grossMarginAverageLast2Qtrs",
+        "nameAr": "متوسط إجمالي دخل أخر ربعين",
+        "type": "max-min",
+        "unit": "%"
+      },
+      {
+        "name": "Gross Margin - Average Last 3 Qtrs",
+        "id": "grossMarginAverageLast3Qtrs",
+        "nameAr": "متوسط إجمالي دخل أخر ٣ أرباع",
+        "type": "max-min",
+        "unit": "%"
+      },
+      {
+        "name": "Gross Margin - Average Last 4 Qtrs",
+        "id": "grossMarginAverageLast4Qtrs",
+        "nameAr": "متوسط إجمالي دخل أخر ٣ أرباع",
+        "type": "max-min",
+        "unit": "%"
+      },
+      {
+        "name": "Gross Margin - Average Last 5 Qtrs",
+        "id": "grossMarginAverageLast5Qtrs",
+        "nameAr": "متوسط إجمالي دخل أخر ٥ أرباع",
+        "type": "max-min",
+        "unit": "%"
+      },
+      {
+        "name": "Gross Margin - Average Last 6 Qtrs",
+        "id": "grossMarginAverageLast6Qtrs",
+        "nameAr": "متوسط إجمالي دخل أخر ٦ أرباع",
+        "type": "max-min",
+        "unit": "%"
+      },
+      {
+        "name": "P/E - current",
+        "id": "peCurrent",
+        "nameAr": "مكرر الربحية",
+        "type": "max-min",
+        "unit": "%"
+      },
+      {
+        "name": "P/E - Percentile Rank",
+        "id": "pePercentileRank",
+        "nameAr": "تقييم مكرر الربحية",
+        "type": "max-min",
+        "unit": "%"
+      },
+      {
+        "name": "P/E < Average 5 Year P/E",
+        "id": "peLessAverage5YearPe",
+        "nameAr": "مكرر الربحية أكبر من او مساوي لمعدل ٥ سنوات",
+        "type": "yes-no"
+      },
+      {
+        "name": "PEG",
+        "id": "peg",
+        "nameAr": "السعر/الأرباح للنمو",
+        "type": "max-min",
+        "unit": "%"
+      },
+      {
+        "name": "ROE - Last Reported Year",
+        "id": "roeLastReportedYear",
+        "nameAr": " العائد على حقوق الملكية للسنة الماضية",
+        "type": "max-min",
+        "unit": "%"
+      },
+      {
+        "name": "ROE - 5 Year Average",
+        "id": "roeAverage5Year",
+        "nameAr": "معدل العائد على حقوق الملكية ٥ سنوات",
+        "type": "max-min",
+        "unit": "%"
+      }
+    ]
+  }
+}
+
+
+export const fetchFilterSettings = createAsyncThunk(
+  "filters/fetchFilterSettings",
+  async (kuzzle) => {
+    const { default: settings } = await import(
+      `../../assets/filter_settings.json`
+    );
+
+    // return settings;
+    return obj;
+  }
+);
+
+const initialState = {};
+
+export const filterSettingsSlice = createSlice({
+  name: "filterOption",
+  initialState,
+  reducers: {},
+  extraReducers: {
+    [fetchFilterSettings.fulfilled]: (state, action) => {
+      const settings = action.payload;
+      Object.keys(settings).forEach((key) => {
+        state[key] = settings[key];
+      });
+    },
+  },
+});
+
+export default filterSettingsSlice.reducer;

@@ -1,0 +1,45 @@
+{
+   "data": [
+        {
+            "nameen":"Miniervini Trend 1 Month",
+            "namear":"مينيرفيني لشهر",
+            "key":"one_month"
+        },
+        {
+            "nameen":"Miniervini Trend 1-4 Months",
+            "namear":" مينيرفيني 1-4 اشهر",
+            "key":"four_month"
+        },
+        {
+            "nameen":"Up on Volume",
+            "namear":"صعود مع ارتفاع حجم التداول",
+            "key":"upOnVolume"
+        },
+        {
+            "nameen":"Down on Volume",
+            "namear":"هبوط مع ارتفاع حجم التداول",
+            "key":"downOnVolume"
+        },
+        {
+            "nameen":"Breaking out today",
+            "namear":"اختراقات اليوم",
+            "key":"breakout"
+        },
+        {
+            "nameen":"Near pivot",
+            "namear":"قريب من الاختراق",
+            "key":"near_pivot"
+
+        },
+        {
+            "nameen":"Potential reversals",
+            "namear":"ارتداد محتمل",
+            "key":"green_dot"
+        },
+        {
+            "nameen":"Power from pivot",
+            "namear":"صعود قوي بعد الاختراق",
+            "key":"power_from_pivot"
+        }
+    ]
+}

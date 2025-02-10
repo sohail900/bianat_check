@@ -1,0 +1,36 @@
+{
+"data":[
+    {
+        "nameen":"William J. O'Neil",
+        "namear":"وليام أونيل",
+        "key":"wjo"
+    },
+    {
+        "nameen":" Warren Buffet",
+        "namear":" وورن بافيت",
+        "key":"warren_buffet"
+    },
+    {
+        "nameen":"Benjamin Graham",
+        "namear":"بنجامين جراهان",
+        "key":"benjamin_graham"
+    },
+    {
+        "nameen":"Peter Lynch",
+        "namear":"بيتر لينش",
+        "key":"peter_lynch"
+    },
+    {
+        "nameen":" Martin Zweig",
+        "namear":"مارتين زوينج",
+        "key":"martin_zweig"
+    },
+    {
+    "nameen":"James Shaughne",
+    "namear":"جيمس شواجن",
+    "key":"james_shaughne"
+    }
+
+]
+
+}

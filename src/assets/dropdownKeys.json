@@ -1,0 +1,22 @@
+{
+    "opt1":[
+        {
+            "key": "eps",
+            "value": "eps"
+          },
+          {
+            "key": "sales",
+            "value": "sales"
+          }
+    ],
+    "opt2":[
+        {
+            "key": "margin",
+            "value": "margin"
+          },
+          {
+            "key":"pE",
+            "value": "PE"
+          }
+    ]
+}

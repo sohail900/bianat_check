@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.wrap-1ETeWwz2:nth-child(8) {
+  display: none;
+}
+
+.layout__area--top {
+  display: none;
+}
+
+html {
+  height: auto;
+}
+
+.perspective {
+  perspective: 900px;
+}
+
+.grecaptcha-badge {
+  visibility: hidden;
+}

@@ -1,0 +1,11 @@
+public/charting_library/
+public/datafeeds/
+src/charting_library/
+node_modules/
+static/
+build/
+yarn-error.log
+yarn.lock
+package-lock.json
+**.zip
+.env**
