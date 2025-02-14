@@ -2,9 +2,16 @@ import { Content } from 'antd/lib/layout/layout'
 import BianatHeader from '../../components/BianatHeader'
 import HighLights from '../home/components/Highlights'
 
+function calculateProfitLoss({ entryPrice, latestPrice }) {
+    return (((latestPrice - entryPrice) / entryPrice) * 100).toFixed(2)
+}
+function calculateStopLoss({ entryPrice, lowestPrice }) {
+    return (((entryPrice - lowestPrice) / entryPrice) * 100).toFixed(2)
+
+}
 //////////////////////
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -15,10 +22,13 @@ const AddOpenPosition = () => {
     const [isGuideOpen, setIsGuideOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
+    const [loading, setLoading] = useState(false)
+    const [latestPrice, setLatestPrice] = useState(0)
+    const [lowestPrice, setLowestPrice] = useState(0)
     // DATA
     const [formData, setFormData] = useState({
+        symbol: "",
         name: '',
-        symbol: '',
         dateOfPenetration: '',
         pointsOfPenetration: '',
         stopLoss: '',
@@ -44,21 +54,21 @@ const AddOpenPosition = () => {
 
     // HANDLES
     const handleSubmit = async () => {
-        if (validate()) {
+        if (validate() || latestPrice || lowestPrice) {
             try {
                 setIsLoading(true)
                 const docRef = collection(dbChatBot, 'openPositions')
-                await addDoc(docRef, formData)
-                message.success('Data Submitted Successfully!')
+                await addDoc(docRef, { ...formData, lastPrice: latestPrice, lowestPrice })
+                message.success(t("success_position"))
                 navigate('/openPostions')
             } catch (error) {
                 console.log(error)
-                message.error('Error In Submitting Data')
+                message.error(t("error_position"))
             } finally {
                 setIsLoading(false)
             }
         } else {
-            message.error('Please fill all the fields')
+            message.error(t("fill_error"))
         }
     }
 
@@ -69,6 +79,34 @@ const AddOpenPosition = () => {
             [name]: value,
         }))
     }
+    const onBlurSymbol = async () => {
+        try {
+            setLoading(true)
+            const now = Math.floor(Date.now() / 1000);
+            const from = now - (7 * 86400);
+            const response = await fetch(`https://bianat.sa//api/chart/en/history?symbol=${formData.symbol}&resolution=1D&from=${from}&to=${now}&countback=2&currencyCode=SAR`)
+            const { c, l } = await response.json()
+            if (c.length === 0) {
+                return message.error(t("invalid_symbol"))
+            }
+            setLowestPrice(Math.min(...l))
+            setLatestPrice(c[c.length - 1])
+
+        } catch (error) {
+            console.log(error)
+            message.error(t("enter_symbol_error"))
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
+    const onChangeStopLoss = (e) => {
+        // calculate profit stop loss %..
+        const profitLossPercent = calculateProfitLoss({ entryPrice: Number(e.target.value), latestPrice })
+        const stopLossPercent = calculateStopLoss({ entryPrice: Number(e.target.value), lowestPrice })
+        setFormData((pre) => ({ ...pre, stopLoss: e.target.value, stopLossPercent, profitLossPercent }))
+    }
 
     // RETURNING UI
     return (
@@ -78,9 +116,8 @@ const AddOpenPosition = () => {
                 followUpPage={'true'}
             />
             <Content
-                className={`landing-content min-h-[100vh] ${
-                    i18n.language === 'en' ? 'font-loader-en' : 'font-loader'
-                } ${currentTheme === 'Dark' && 'dark-skin'}`}
+                className={`landing-content min-h-[100vh] ${i18n.language === 'en' ? 'font-loader-en' : 'font-loader'
+                    } ${currentTheme === 'Dark' && 'dark-skin'}`}
             >
                 <div className='live-update-toolbar'>
                     <HighLights />
@@ -99,9 +136,10 @@ const AddOpenPosition = () => {
                                     type='text'
                                     name='symbol'
                                     value={formData.symbol}
+                                    onBlur={onBlurSymbol}
                                     onChange={handleChange}
                                     placeholder='Enter Symbol'
-                                    className='bg-slate-800 rounded-lg p-3 outline-none w-[250px]'
+                                    className='bg-slate-800 rounded-lg p-3 outline-none w-[250px] border border-transparent focus:border-[#004F86]'
                                 />
                             </div>
                             <input
@@ -110,7 +148,20 @@ const AddOpenPosition = () => {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder='Enter Name'
-                                className='bg-slate-800 rounded-lg p-3 outline-none w-[250px]'
+                                className='bg-slate-800 rounded-lg p-3 outline-none w-[250px] border border-transparent focus:border-[#004F86]'
+                            />
+                        </div>
+                        <div className='flex gap-10 items-center'>
+                            <label className='w-[150px] font-bold'>
+                                {t('last_price')}
+                            </label>
+                            <input
+                                type='text'
+                                name='last_price'
+                                readOnly
+                                value={latestPrice}
+                                placeholder='Last Price'
+                                className='bg-slate-800 rounded-lg p-3 outline-none w-[250px] border border-transparent focus:border-[#004F86]'
                             />
                         </div>
                         <div className='flex gap-10 items-center'>
@@ -123,7 +174,7 @@ const AddOpenPosition = () => {
                                 placeholder='Date of penetration'
                                 value={formData.dateOfPenetration}
                                 onChange={handleChange}
-                                className='bg-slate-800 rounded-lg p-2 outline-none w-[250px]'
+                                className='bg-slate-800 rounded-lg p-3 outline-none w-[250px] border border-transparent focus:border-[#004F86]'
                             />
                             <input
                                 type='text'
@@ -131,7 +182,7 @@ const AddOpenPosition = () => {
                                 value={formData.pointsOfPenetration}
                                 onChange={handleChange}
                                 placeholder='Point of penetration'
-                                className='bg-slate-800 rounded-lg p-2 outline-none w-[250px]'
+                                className='bg-slate-800 rounded-lg p-3 outline-none w-[250px] border border-transparent focus:border-[#004F86]'
                             />
                         </div>
                         {/* <div className='flex gap-10 items-center'>
@@ -162,17 +213,18 @@ const AddOpenPosition = () => {
                                 type='text'
                                 name='stopLoss'
                                 value={formData.stopLoss}
-                                onChange={handleChange}
+                                onChange={onChangeStopLoss}
+                                disabled={!latestPrice || !lowestPrice}
                                 placeholder='Price'
-                                className='bg-slate-800 rounded-lg p-2 outline-none w-[250px]'
+                                className='bg-slate-800 rounded-lg p-3 outline-none w-[250px] border border-transparent focus:border-[#004F86]'
                             />
                             <input
                                 type='text'
                                 name='stopLossPercent'
+                                readonly
                                 value={formData.stopLossPercent}
-                                onChange={handleChange}
                                 placeholder='Percentage (%)'
-                                className='bg-slate-800 rounded-lg p-2 outline-none w-[250px]'
+                                className='bg-slate-800 rounded-lg p-3 outline-none w-[250px] border border-transparent focus:border-[#004F86]'
                             />
                         </div>
 
@@ -221,10 +273,10 @@ const AddOpenPosition = () => {
                             <input
                                 type='text'
                                 name='profitLossPercent'
+                                readOnly
                                 value={formData.profitLossPercent}
-                                onChange={handleChange}
                                 placeholder='Enter Profit Loss %'
-                                className='bg-slate-800 rounded-lg p-2 outline-none w-[250px]'
+                                className='bg-slate-800 rounded-lg p-3 outline-none w-[250px] border border-transparent focus:border-[#004F86]'
                             />
                         </div>
                         <div className='flex gap-10 items-center'>
@@ -237,7 +289,7 @@ const AddOpenPosition = () => {
                                 value={formData.typeOfProcess}
                                 onChange={handleChange}
                                 placeholder='Type of Process'
-                                className='bg-slate-800 rounded-lg p-3 outline-none w-[250px]'
+                                className='bg-slate-800 rounded-lg p-3 outline-none w-[250px] border border-transparent focus:border-[#004F86]'
                             />
                         </div>
                         {/* <div className="flex gap-10 items-center">

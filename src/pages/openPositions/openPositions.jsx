@@ -16,6 +16,7 @@ import {
 } from 'firebase/firestore'
 import { dbChatBot } from '../../utils/firebase/config'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
+import { message } from 'antd'
 
 const OpenPostions = () => {
     const navigate = useNavigate()
@@ -56,12 +57,11 @@ const OpenPostions = () => {
         try {
             const docRef = doc(dbChatBot, 'openPositions', docId) // Reference to the document
             await deleteDoc(docRef) // Delete the document
-            console.log(`Document with ID ${docId} successfully deleted!`)
-            alert('Document successfully deleted!')
+            message.success(t("del_position"))
             fetchData()
         } catch (error) {
             console.error('Error deleting document: ', error)
-            alert('Error deleting document!')
+            message.error(t("failed_del"))
         }
     }
 
@@ -76,9 +76,8 @@ const OpenPostions = () => {
                 followUpPage={'true'}
             />
             <Content
-                className={`landing-content min-h-[100vh] ${
-                    i18n.language === 'en' ? 'font-loader-en' : 'font-loader'
-                } ${currentTheme === 'Dark' && 'dark-skin'}`}
+                className={`landing-content min-h-[100vh] ${i18n.language === 'en' ? 'font-loader-en' : 'font-loader'
+                    } ${currentTheme === 'Dark' && 'dark-skin'}`}
             >
                 <div className='live-update-toolbar'>
                     <HighLights />
@@ -118,6 +117,12 @@ const OpenPostions = () => {
                                         style={{ padding: '10px' }}
                                     >
                                         {t('openPosition.symbol')}
+                                    </th>
+                                    <th
+                                        className={thStyles}
+                                        style={{ padding: '10px' }}
+                                    >
+                                        {t('last_price')}
                                     </th>
                                     <th
                                         className={thStyles}
@@ -227,6 +232,12 @@ const OpenPostions = () => {
                                                 className={thStyles}
                                                 style={{ padding: '20px 10px' }}
                                             >
+                                                {row.lastPrice}
+                                            </td>
+                                            <td
+                                                className={thStyles}
+                                                style={{ padding: '20px 10px' }}
+                                            >
                                                 {row.dateOfPenetration}
                                             </td>
                                             <td
@@ -242,16 +253,18 @@ const OpenPostions = () => {
                                                 {row.stopLoss}
                                             </td>
                                             <td
-                                                className={thStyles}
+                                                dir='ltr'
+                                                className={`border-x rtl:text-right ${row.stopLossPercent < 0 ? "text-red-500" : "text-green-600"}`}
                                                 style={{ padding: '20px 10px' }}
                                             >
-                                                {row.stopLossPercent}
+                                                {row.stopLossPercent < 0 ? `${row.stopLossPercent}` : `+${row.stopLossPercent}`}%
                                             </td>
                                             <td
-                                                className={thStyles}
+                                                dir='ltr'
+                                                className={`border-x rtl:text-right ${row.profitLossPercent < 0 ? "text-red-500" : "text-green-600"}`}
                                                 style={{ padding: '20px 10px' }}
                                             >
-                                                {row.profitLossPercent}
+                                                {row.profitLossPercent < 0 ? row.profitLossPercent : `+${row.profitLossPercent}`}%
                                             </td>
                                             <td
                                                 className={thStyles}

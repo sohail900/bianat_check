@@ -11,10 +11,23 @@ import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore'
 import { dbChatBot } from '../../utils/firebase/config'
 import { useNavigate, useParams } from 'react-router-dom'
 import { message, Button } from 'antd'
+import { late } from 'zod'
+
+
+function calculateProfitLoss({ entryPrice, latestPrice }) {
+    return (((latestPrice - entryPrice) / entryPrice) * 100).toFixed(2)
+}
+function calculateStopLoss({ entryPrice, lowestPrice }) {
+    return (((entryPrice - lowestPrice) / entryPrice) * 100).toFixed(2)
+
+}
+
 const UpdateOpenPosition = () => {
     const params = useParams()
     const [isGuideOpen, setIsGuideOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [latestPrice, setLatestPrice] = useState(0)
+    const [lowestPrice, setLowestPrice] = useState(0)
     const navigate = useNavigate()
     // DATA
     const [formData, setFormData] = useState({
@@ -50,6 +63,8 @@ const UpdateOpenPosition = () => {
                         profitLossPercent: data.profitLossPercent || '',
                         typeOfProcess: data.typeOfProcess || '',
                     })
+                    setLowestPrice(data.lowestPrice)
+                    setLatestPrice(data.lastPrice)
                 } else {
                     alert('Error finding data!')
                 }
@@ -84,8 +99,8 @@ const UpdateOpenPosition = () => {
             return
         }
 
-        if (!validate()) {
-            return
+        if (!validate() || !lowestPrice || !latestPrice) {
+            return message.error(t("fill_error"))
         }
 
         setIsLoading(true)
@@ -101,14 +116,35 @@ const UpdateOpenPosition = () => {
                 stopLossPercent: formData.stopLossPercent,
                 profitLossPercent: formData.profitLossPercent,
                 typeOfProcess: formData.typeOfProcess,
+                lastPrice: latestPrice,
+                lowestPrice
             })
-            message.success('Document successfully updated!')
+            message.success(t("update_position"))
             navigate('/openPostions')
         } catch (error) {
             console.error('Error updating document: ', error)
-            message.error('Error updating document!')
+            message.error(t("error_update_position"))
         } finally {
             setIsLoading(false)
+        }
+    }
+
+    const onBlurSymbol = async () => {
+        try {
+
+            const now = Math.floor(Date.now() / 1000);
+            const from = now - (7 * 86400);
+            const response = await fetch(`https://bianat.sa//api/chart/en/history?symbol=${formData.symbol}&resolution=1D&from=${from}&to=${now}&countback=2&currencyCode=SAR`)
+            const { c, l } = await response.json()
+            if (c.length === 0) {
+                return message.error(t("invalid_symbol"))
+            }
+            setLowestPrice(Math.min(...l))
+            setLatestPrice(c[c.length - 1])
+
+        } catch (error) {
+            console.log(error)
+            message.error(t("enter_symbol_error"))
         }
     }
 
@@ -119,7 +155,11 @@ const UpdateOpenPosition = () => {
             [name]: value,
         }))
     }
-
+    const onChangeStopLoss = (e) => {
+        const profitLossPercent = calculateProfitLoss({ entryPrice: Number(e.target.value), latestPrice })
+        const stopLossPercent = calculateStopLoss({ entryPrice: Number(e.target.value), lowestPrice })
+        setFormData((pre) => ({ ...pre, stopLoss: e.target.value, stopLossPercent, profitLossPercent }))
+    }
     // RETURNING UI
     return (
         <div className='h-full'>
@@ -128,9 +168,8 @@ const UpdateOpenPosition = () => {
                 followUpPage={'true'}
             />
             <Content
-                className={`landing-content min-h-[100vh] ${
-                    i18n.language === 'en' ? 'font-loader-en' : 'font-loader'
-                } ${currentTheme === 'Dark' && 'dark-skin'}`}
+                className={`landing-content min-h-[100vh] ${i18n.language === 'en' ? 'font-loader-en' : 'font-loader'
+                    } ${currentTheme === 'Dark' && 'dark-skin'}`}
             >
                 <div className='live-update-toolbar'>
                     <HighLights />
@@ -149,6 +188,7 @@ const UpdateOpenPosition = () => {
                                     type='text'
                                     name='symbol'
                                     value={formData.symbol}
+                                    onBlur={onBlurSymbol}
                                     onChange={handleChange}
                                     placeholder='Enter Symbol'
                                     className='bg-slate-800 rounded-lg p-3 outline-none w-[250px]'
@@ -161,6 +201,19 @@ const UpdateOpenPosition = () => {
                                 onChange={handleChange}
                                 placeholder='Enter Name'
                                 className='bg-slate-800 rounded-lg p-3 outline-none w-[250px]'
+                            />
+                        </div>
+                        <div className='flex gap-10 items-center'>
+                            <label className='w-[150px] font-bold'>
+                                {t('last_price')}
+                            </label>
+                            <input
+                                type='text'
+                                name='last_price'
+                                readOnly
+                                value={latestPrice}
+                                placeholder='Last Price'
+                                className='bg-slate-800 rounded-lg p-3 outline-none w-[250px] border border-transparent focus:border-[#004F86]'
                             />
                         </div>
                         <div className='flex gap-10 items-center'>
@@ -212,7 +265,7 @@ const UpdateOpenPosition = () => {
                                 type='text'
                                 name='stopLoss'
                                 value={formData.stopLoss}
-                                onChange={handleChange}
+                                onChange={onChangeStopLoss}
                                 placeholder='Price'
                                 className='bg-slate-800 rounded-lg p-2 outline-none w-[250px]'
                             />
