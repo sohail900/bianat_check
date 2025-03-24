@@ -49,7 +49,7 @@ const AddOpenPosition = () => {
 
     // HANDLES
     const handleSubmit = async () => {
-        if (validate()) {
+        if (validate() || latestPrice || lowestPrice) {
             try {
                 setIsLoading(true)
                 const docRef = collection(dbChatBot, 'openPositions')
@@ -86,6 +86,25 @@ const AddOpenPosition = () => {
             }
             setLowestPrice(Math.min(...l))
             setLatestPrice(c[c.length - 1])
+<<<<<<< HEAD
+=======
+
+        } catch (error) {
+            console.log(error)
+            message.error(t("enter_symbol_error"))
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
+    const onChangeStopLoss = (e) => {
+        // calculate profit stop loss %..
+        const profitLossPercent = calculateProfitLoss({ entryPrice: Number(e.target.value), latestPrice })
+        const stopLossPercent = calculateStopLoss({ entryPrice: Number(e.target.value), lowestPrice })
+        setFormData((pre) => ({ ...pre, stopLoss: e.target.value, stopLossPercent, profitLossPercent }))
+    }
+>>>>>>> 57dda087e00c7cc19029127c14f4bd19ce04a245
 
         } catch (error) {
             console.log(error)
@@ -292,7 +311,11 @@ const AddOpenPosition = () => {
                                 onChange={typeProcessOnChange}
                                 placeholder='Type of Process'
                                 className='bg-slate-800 rounded-lg p-3 outline-none w-[250px] border border-transparent focus:border-[#004F86]'
+<<<<<<< HEAD
                             ></textarea>
+=======
+                            />
+>>>>>>> 57dda087e00c7cc19029127c14f4bd19ce04a245
                         </div>
                         {/* <div className="flex gap-10 items-center">
               <label className="w-[150px] font-bold">

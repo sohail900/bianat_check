@@ -155,6 +155,7 @@ const UpdateOpenPosition = () => {
         const stopLossPercent = calculateStopLoss({ entryPrice: Number(e.target.value), lowestPrice })
         setFormData((pre) => ({ ...pre, stopLoss: e.target.value, stopLossPercent, profitLossPercent }))
     }
+<<<<<<< HEAD
     const typeProcessOnChange = (e) => {
         let { name, value } = e.target;
         setFormData((prevData) => ({
@@ -162,6 +163,8 @@ const UpdateOpenPosition = () => {
             [name]: value,
         }))
     };
+=======
+>>>>>>> 57dda087e00c7cc19029127c14f4bd19ce04a245
     // RETURNING UI
     return (
         <div className='h-full'>

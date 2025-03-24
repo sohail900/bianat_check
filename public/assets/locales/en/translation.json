@@ -53,6 +53,7 @@
     "fridays": "Friday's",
     "action": "action",
     "current_outlook": "current outlook",
+<<<<<<< HEAD
     "success_position": "Add position successfully",
     "error_position": "Failed to add position",
     "fill_error": "Please fill all the fields",
@@ -61,6 +62,16 @@
     "update_position": "Update position successfully",
     "error_update_position": "Failed to update position",
     "enter_symbol_error": "Symbol not found or server error",
+=======
+    "success_position":"Add position successfully",
+    "error_position":"Failed to add position",
+    "fill_error":"Please fill all the fields",
+    "del_position":"Position successfully deleted!",
+    "failed_del":"Failed to deleted position",
+    "update_position":"Update position successfully",
+    "error_update_position":"Failed to update position",
+    "enter_symbol_error":"Symbol not found or server error",
+>>>>>>> 57dda087e00c7cc19029127c14f4bd19ce04a245
     "distribution_days": "Distribution days",
     "up_on_volume": "up on volume",
     "down_on_volume": "down on volume",
@@ -385,8 +396,13 @@
     "Let's keep in touch": "Let's keep in touch",
     "Contact Us": "Contact Us",
     "Last Name": "Last Name",
+<<<<<<< HEAD
     "last_price": "Last Price",
     "invalid_symbol": "Invalid symbol",
+=======
+    "last_price":"Last Price",
+    "invalid_symbol":"Invalid symbol",
+>>>>>>> 57dda087e00c7cc19029127c14f4bd19ce04a245
     "First Name": "First Name",
     "Services": "Services",
     "Plans": "Plans",

@@ -258,6 +258,7 @@ const OpenPostions = () => {
                                                 style={{ padding: '20px 10px' }}
                                             >
                                                 {row.stopLossPercent < 0 ? `${row.stopLossPercent}` : `+${row.stopLossPercent}`}%
+<<<<<<< HEAD
                                             </td>
                                             <td
                                                 dir='ltr'
@@ -265,13 +266,26 @@ const OpenPostions = () => {
                                                 style={{ padding: '20px 10px' }}
                                             >
                                                 {row.profitLossPercent < 0 ? row.profitLossPercent : `+${row.profitLossPercent}`}%
+=======
+>>>>>>> 57dda087e00c7cc19029127c14f4bd19ce04a245
+                                            </td>
+                                            <td
+                                                dir='ltr'
+                                                className={`border-x rtl:text-right ${row.profitLossPercent < 0 ? "text-red-500" : "text-green-600"}`}
+                                                style={{ padding: '20px 10px' }}
+                                            >
+<<<<<<< HEAD
+                                                <p dangerouslySetInnerHTML={{ __html: row.typeOfProcess.replace(/\n/g, "<br />") }} />
+                                                {/* {row.typeOfProcess} */}
+=======
+                                                {row.profitLossPercent < 0 ? row.profitLossPercent : `+${row.profitLossPercent}`}%
                                             </td>
                                             <td
                                                 className={thStyles}
                                                 style={{ padding: '20px 10px' }}
                                             >
-                                                <p dangerouslySetInnerHTML={{ __html: row.typeOfProcess.replace(/\n/g, "<br />") }} />
-                                                {/* {row.typeOfProcess} */}
+                                                {row.typeOfProcess}
+>>>>>>> 57dda087e00c7cc19029127c14f4bd19ce04a245
                                             </td>
                                             {/* <td
                                                 className={thStyles}
