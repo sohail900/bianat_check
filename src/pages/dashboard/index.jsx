@@ -162,10 +162,9 @@ class TVChartContainer extends React.PureComponent {
                     : this.props.currentStock,
 
             datafeed: new window.Datafeeds.UDFCompatibleDatafeed(
-                `${this.props.datafeedUrl}/api/chart/${
-                    this.props.currentLanguage
-                        ? this.props.currentLanguage
-                        : lang
+                `${this.props.datafeedUrl}api/chart/${this.props.currentLanguage
+                    ? this.props.currentLanguage
+                    : lang
                 }`
             ),
 
@@ -177,12 +176,12 @@ class TVChartContainer extends React.PureComponent {
                 lang != undefined
                     ? lang
                     : this.props && this.state.currentLanguage
-                      ? this.state.currentLanguage
-                      : this.props.currentLanguage,
+                        ? this.state.currentLanguage
+                        : this.props.currentLanguage,
             charts_storage_url: `${this.props.chartsStorageUrl}api/chart/${
                 // /api
                 this.props.currentLanguage ? this.props.currentLanguage : lang
-            }`,
+                }`,
             charts_storage_api_version: this.props.chartsStorageApiVersion,
             client_id: this.props.clientId,
             user_id: this.state.userId || this.props.userId,
@@ -194,15 +193,15 @@ class TVChartContainer extends React.PureComponent {
             enabled_features: ['study_templates'],
             disabled_features: this.state.isMobile
                 ? [
-                      'use_localstorage_for_settings',
-                      'left_toolbar',
-                      'header_widget',
-                      'timeframes_toolbar',
-                      'edit_buttons_in_legend',
-                      'context_menus',
-                      'control_bar',
-                      'border_around_the_chart',
-                  ]
+                    'use_localstorage_for_settings',
+                    'left_toolbar',
+                    'header_widget',
+                    'timeframes_toolbar',
+                    'edit_buttons_in_legend',
+                    'context_menus',
+                    'control_bar',
+                    'border_around_the_chart',
+                ]
                 : ['control_bar'],
 
             custom_indicators_getter: async function (PineJS) {
@@ -438,9 +437,9 @@ class TVChartContainer extends React.PureComponent {
                             this.main = function (context, inputCallback) {
                                 const indexData =
                                     wholeData[
-                                        context.symbol.info.exchange
-                                            ? context.symbol.info.exchange
-                                            : 'TASI'
+                                    context.symbol.info.exchange
+                                        ? context.symbol.info.exchange
+                                        : 'TASI'
                                     ]
                                 if (isNaN(context.symbol.time)) {
                                     return [0, 0, 0]
@@ -453,7 +452,7 @@ class TVChartContainer extends React.PureComponent {
                                                 ?.toISOString()
                                                 ?.split('T')[0]
                                         ] || 1)) *
-                                        100,
+                                    100,
                                     0,
                                 ]
                             }
@@ -641,18 +640,15 @@ class TVChartContainer extends React.PureComponent {
                 <Layout>
                     <Content
                         style={{ marginTop: 0 }}
-                        className={`${
-                            this.props.currentTheme === 'Dark' && 'dark-skin'
-                        }`}
+                        className={`${this.props.currentTheme === 'Dark' && 'dark-skin'
+                            }`}
                     >
                         <div className='dashboard-content'>
                             <div
-                                className={`main-panel ${
-                                    !this.state.showLeftPanel && 'is-left-full'
-                                } ${
-                                    !this.state.showRightPanel &&
+                                className={`main-panel ${!this.state.showLeftPanel && 'is-left-full'
+                                    } ${!this.state.showRightPanel &&
                                     'is-right-full'
-                                }
+                                    }
                   ${!this.state.showBottomPanel && 'is-bottom-full'}
                   ${this.state.showBottomHalf && 'is-bottomHalf-full'}
                   ${this.state.showBottomFull && 'is-bottomFull-full'}`}
@@ -668,11 +664,10 @@ class TVChartContainer extends React.PureComponent {
                                 {/* </>
                                 )} */}
                                 <div
-                                    className={` sm:${
-                                        this.state.showHistoryTable
-                                            ? 'chartwrapper open-history'
-                                            : 'chartwrapper close-history'
-                                    }`}
+                                    className={` sm:${this.state.showHistoryTable
+                                        ? 'chartwrapper open-history'
+                                        : 'chartwrapper close-history'
+                                        }`}
                                 >
                                     {/* {!this.state.isMobile && (
                                         <> */}
@@ -687,11 +682,10 @@ class TVChartContainer extends React.PureComponent {
                                     {/* </>
                                     )} */}
                                     <div
-                                        className={`max-sm:hidden ${
-                                            this.state.showHistoryTable
-                                                ? 'showTable chart-detail-info'
-                                                : 'notShowTable chart-detail-info'
-                                        }`}
+                                        className={`max-sm:hidden ${this.state.showHistoryTable
+                                            ? 'showTable chart-detail-info'
+                                            : 'notShowTable chart-detail-info'
+                                            }`}
                                     >
                                         {/* {!this.state.isMobile && (
                                             <> */}
@@ -740,9 +734,8 @@ class TVChartContainer extends React.PureComponent {
                                         '
                                     >
                                         <div
-                                            className={`main-chart-wrap ${
-                                                this.state.isMobile && ' w-full'
-                                            }`}
+                                            className={`main-chart-wrap ${this.state.isMobile && ' w-full'
+                                                }`}
                                         >
                                             {/* <div
                         className={`watermark ${
@@ -758,19 +751,18 @@ class TVChartContainer extends React.PureComponent {
                                                     height: this.state.isMobile
                                                         ? ''
                                                         : !this.state
-                                                                .showBottomHalf &&
+                                                            .showBottomHalf &&
                                                             !this.state
                                                                 .showBottomFull
-                                                          ? this.state
+                                                            ? this.state
                                                                 .chartHeight
-                                                          : '',
+                                                            : '',
                                                 }}
                                                 id={this.props.containerId}
-                                                className={`TVChartContainer ${
-                                                    this.state.isMobile
-                                                        ? ''
-                                                        : ''
-                                                } `}
+                                                className={`TVChartContainer ${this.state.isMobile
+                                                    ? ''
+                                                    : ''
+                                                    } `}
                                             />
                                         </div>
                                         {/* ////////////////////////////////////////// */}

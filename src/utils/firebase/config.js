@@ -2,6 +2,7 @@ import { initializeApp, getApps } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
+import {  getFunctions } from 'firebase/functions'
 
 // Firebase configuration for the chatbot app
 const firebaseConfigChatBot = {
@@ -21,4 +22,5 @@ const appChatBot =
 
 export const authChatBot = getAuth(appChatBot)
 export const dbChatBot = getFirestore(appChatBot)
+export const functions = getFunctions(appChatBot,"asia-south1")
 export const storageChatBot = getStorage(appChatBot)

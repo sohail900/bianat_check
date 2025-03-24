@@ -13,59 +13,60 @@ import RangeInput from "./RangeInput";
  */
 
 const FilterForm = ({ settings }) => {
-  const currentTheme = useSelector((state) => state.currentTheme.currentTheme);
+    const currentTheme = useSelector((state) => state.currentTheme.currentTheme);
 
-  const { Option } = Select;
-  const { t, i18n } = useTranslation();
 
-  return (
-    <>
-      {settings.map((filter, index) => {
-        return (
-          <Col className="gutter-row" span={24} key={index}>
-            <Form.Item
-              label={
-                i18n.language === "ar" && filter.nameAr
-                  ? filter.nameAr
-                  : filter.name
-              }
-              name={filter.custom ? `custom-${index}` : filter.id}
-            >
-              {filter?.type === "max-min" ? (
-                <RangeInput unit={filter?.unit} />
-              ) : filter?.type === "yes-no" ? (
-                <Radio.Group>
-                  <Radio value={"Yes"}>Yes</Radio>
-                  <Radio value={"No"}>No</Radio>
-                </Radio.Group>
-              ) : filter?.type === "checklist" ? (
-                <></>
-              ) : (
-                <Select
-                  className={`${currentTheme === "Dark" && "dark-skin"}`}
-                  size="small"
-                  allowClear={true}
-                  placeholder={`${t(filter.name)}`}
-                  style={{ width: "100%" }}
-                >
-                  {filter?.options.map((item, itemIndex) => (
-                    <Option
-                      className={`${currentTheme === "Dark" && "dark-skin"}`}
-                      key={`${itemIndex}--${item.key}-${item.value}`}
-                      value={item.field ? item.field : item.key}
-                    >
-                      {item.value}
-                    </Option>
-                  ))}
-                </Select>
-              )}
-            </Form.Item>
-            <hr />
-          </Col>
-        );
-      })}
-    </>
-  );
+    const { Option } = Select;
+    const { t, i18n } = useTranslation();
+
+    return (
+        <>
+            {settings.map((filter, index) => {
+                return (
+                    <Col className="gutter-row" span={24} key={index}>
+                        <Form.Item
+                            label={
+                                i18n.language === "ar" && filter.nameAr
+                                    ? filter.nameAr
+                                    : filter.name
+                            }
+                            name={filter.custom ? `custom-${index}` : filter.id}
+                        >
+                            {filter?.type === "max-min" ? (
+                                <RangeInput unit={filter?.unit} />
+                            ) : filter?.type === "yes-no" ? (
+                                <Radio.Group>
+                                    <Radio value={"Yes"}>Yes</Radio>
+                                    <Radio value={"No"}>No</Radio>
+                                </Radio.Group>
+                            ) : filter?.type === "checklist" ? (
+                                <></>
+                            ) : (
+                                <Select
+                                    className={`${currentTheme === "Dark" && "dark-skin"}`}
+                                    size="small"
+                                    allowClear={true}
+                                    placeholder={`${t(filter.name)}`}
+                                    style={{ width: "100%" }}
+                                >
+                                    {filter?.options.map((item, itemIndex) => (
+                                        <Option
+                                            className={`${currentTheme === "Dark" && "dark-skin"}`}
+                                            key={`${itemIndex}--${item.key}-${item.value}`}
+                                            value={item.field ? item.field : item.key}
+                                        >
+                                            {item.value}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            )}
+                        </Form.Item>
+                        <hr />
+                    </Col>
+                );
+            })}
+        </>
+    );
 };
 
 export default FilterForm;
